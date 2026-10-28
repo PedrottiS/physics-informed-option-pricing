@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/rosenoir/PINN_option/cpp/build",
+  "command": "/usr/bin/c++  -I/home/rosenoir/PINN_option/cpp/include -isystem /usr/include/eigen3 -O3 -DNDEBUG -std=gnu++17 -O2 -Wall -Wextra -Wpedantic -o CMakeFiles/bs_fd.dir/src/main.cpp.o -c /home/rosenoir/PINN_option/cpp/src/main.cpp",
+  "file": "/home/rosenoir/PINN_option/cpp/src/main.cpp",
+  "output": "CMakeFiles/bs_fd.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/rosenoir/PINN_option/cpp/build",
+  "command": "/usr/bin/c++  -I/home/rosenoir/PINN_option/cpp/include -isystem /usr/include/eigen3 -O3 -DNDEBUG -std=gnu++17 -O2 -Wall -Wextra -Wpedantic -o CMakeFiles/bs_fd_test.dir/src/test.cpp.o -c /home/rosenoir/PINN_option/cpp/src/test.cpp",
+  "file": "/home/rosenoir/PINN_option/cpp/src/test.cpp",
+  "output": "CMakeFiles/bs_fd_test.dir/src/test.cpp.o"
+}
+]

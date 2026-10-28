@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/bs_fd_test.dir/src/test.cpp.o -o bs_fd_test 

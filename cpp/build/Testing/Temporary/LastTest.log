@@ -1,0 +1,22 @@
+Start testing: Oct 28 20:47 CET
+----------------------------------------------------------
+1/1 Testing: unit_tests
+1/1 Test: unit_tests
+Command: "/home/rosenoir/PINN_option/cpp/build/bs_fd_test"
+Directory: /home/rosenoir/PINN_option/cpp/build
+"unit_tests" start time: Oct 28 20:47 CET
+Output:
+----------------------------------------------------------
+
+=== Unit tests ===
+Passed: 19
+Failed: 0
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"unit_tests" end time: Oct 28 20:47 CET
+"unit_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 28 20:47 CET
