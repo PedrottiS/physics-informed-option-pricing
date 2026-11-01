@@ -1,1 +1,1 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/bs_fd.dir/src/main.cpp.o -o bs_fd 
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/bs_fd.dir/src/main.cpp.o -o bs_fd   -L/home/rosenoir/PINN_option/cpp/onnxruntime/lib  -Wl,-rpath,/home/rosenoir/PINN_option/cpp/onnxruntime/lib -lonnxruntime 
