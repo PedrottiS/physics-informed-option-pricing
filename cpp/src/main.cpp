@@ -1,8 +1,11 @@
 #include "black_scholes.hpp"
 #include "crank_nicolson.hpp"
+#include "pinn_onnx.hpp" // <-- Aggiunto include per la PINN
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <chrono>
+#include <vector>
 
 using namespace pinn;
 
@@ -63,8 +66,6 @@ int main() {
 
     // Put-call parity
     std::cout << "\n=== Put-call parity ===\n";
-    const double c_bs = bs_call(S0, bs.K, bs.T, bs.r, bs.sigma);
-    const double p_bs = bs_put (S0, bs.K, bs.T, bs.r, bs.sigma);
     const double c_fd = CrankNicolson::price_at(solver.solve_european_call(), S0);
     const double p_fd = CrankNicolson::price_at(solver.solve_european_put(),  S0);
     const double lhs  = c_fd - p_fd;
@@ -72,6 +73,56 @@ int main() {
     std::cout << "C - P (FD)      = " << lhs << "\n";
     std::cout << "S - K e^{-rT}   = " << rhs << "\n";
     std::cout << "|diff|          = " << std::abs(lhs - rhs) << "\n";
+
+    // =========================================================================
+    // M7: PINN ONNX TEST & LATENCY BENCHMARK
+    // =========================================================================
+    std::cout << "\n=== M7: PINN ONNX Inference Test ===\n";
+    try {
+        // Assicurati che il percorso del modello sia corretto!
+        PinnOnnx pinn_model("../models/pinn_bs.onnx");
+        
+        float tau = static_cast<float>(bs.T); // tau = T (cioè oggi)
+        float S   = static_cast<float>(S0);
+        
+        float pinn_price = pinn_model.predict(tau, S);
+        
+        std::cout << "Input: tau=" << tau << ", S=" << S << "\n";
+        std::cout << "PINN price:      " << pinn_price << "\n";
+        std::cout << "BS analytic:     " << ref << "\n";
+        std::cout << "Absolute error:  " << std::abs(pinn_price - ref) << "\n";
+
+        // Latenza PINN (facciamo 1000 run per fare una media)
+        const int N_runs = 1000;
+        auto start_pinn = std::chrono::high_resolution_clock::now();
+        float sum = 0.0f;
+        for (int i = 0; i < N_runs; ++i) {
+            sum += pinn_model.predict(tau, S);
+        }
+        auto end_pinn = std::chrono::high_resolution_clock::now();
+        auto duration_pinn = std::chrono::duration_cast<std::chrono::microseconds>(end_pinn - start_pinn).count();
+        double avg_pinn_us = static_cast<double>(duration_pinn) / N_runs;
+
+        // Latenza Crank-Nicolson (facciamo 10 run, è più lento)
+        const int N_runs_cn = 10;
+        auto start_cn = std::chrono::high_resolution_clock::now();
+        double sum_cn = 0.0;
+        for (int i = 0; i < N_runs_cn; ++i) {
+            sum_cn += CrankNicolson::price_at(solver.solve_european_call(), S0);
+        }
+        auto end_cn = std::chrono::high_resolution_clock::now();
+        auto duration_cn = std::chrono::duration_cast<std::chrono::microseconds>(end_cn - start_cn).count();
+        double avg_cn_us = static_cast<double>(duration_cn) / N_runs_cn;
+
+        std::cout << "\n--- Latency Benchmark ---\n";
+        std::cout << "PINN (C++/ONNX): " << avg_pinn_us << " us/price\n";
+        std::cout << "Crank-Nicolson:  " << avg_cn_us << " us/price\n";
+        std::cout << "Speedup:         " << (avg_cn_us / avg_pinn_us) << "x\n";
+
+    } catch (const std::exception& e) {
+        std::cerr << "ERRORE ONNX: " << e.what() << "\n";
+        std::cerr << "Controlla che il file .onnx e la cartella onnxruntime siano nel posto giusto.\n";
+    }
 
     return 0;
 }
